@@ -1,0 +1,29 @@
+{
+  "name": "colabb-api",
+  "version": "1.0.0",
+  "description": "Api for Colabb app",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "serve": "nodemon --exec npx babel-node ./server.js --presets latest --require dotenv/config",
+    "build": "rimraf dist/ && babel ./ --out-dir dist/ --ignore ./node_modules,./.babelrc,./package.json,./npm-debug.log --copy-files"
+  },
+  "author": "Klyashtornyy Nikolay",
+  "license": "ISC",
+  "dependencies": {
+    "@types/express": "^4.16.0",
+    "bcryptjs": "^2.4.3",
+    "body-parser": "^1.18.3",
+    "express": "^4.16.3",
+    "jsonwebtoken": "^8.3.0",
+    "mongodb": "^3.1.6",
+    "mongoose": "^5.2.17"
+  },
+  "devDependencies": {
+    "babel-cli": "^6.26.0",
+    "babel-preset-latest": "^6.24.1",
+    "dotenv": "^6.0.0",
+    "nodemon": "^1.18.4",
+    "rimraf": "^2.6.2"
+  }
+}
