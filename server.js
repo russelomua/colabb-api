@@ -5,6 +5,7 @@ import bodyParser from 'body-parser';
 import authRouter from './routes/auth';
 import userRouter from './routes/user';
 import staffRouter from './routes/staff';
+import { requireAuthentication } from './helpers/functions'
 
 import CrossDomain from './routes/crossDomain'
 
@@ -34,7 +35,7 @@ app.use(CrossDomain);
 // API routes
 app.use('/auth', authRouter);
 
-//app.all('/api/*', requireAuthentication)
+app.all('/api/*', requireAuthentication)
 app.use('/user', userRouter);
 app.use('/api/staff', staffRouter);
 

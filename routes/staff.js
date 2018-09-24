@@ -4,9 +4,12 @@ const staffRouter = express.Router();
 
 staffRouter.route('/')
   .get((req, res) => {
-    Staff.find({}).then(staffs => res.json(staffs));  
+    Staff.find({}).then(staffs => res.status(200).json(staffs));  
   })
   .post((req, res) => {
+    if(typeof req.body._id !== "undefined")
+      delete req.body._id;
+    
     let staff = new Staff(req.body);
     staff.save()
       .then(staff => res.status(201).send(staff))
@@ -28,14 +31,8 @@ staffRouter.use('/:staffId', (req, res, next)=>{
 staffRouter.route('/:staffId')
     .get((req, res) => {
         res.json(req.staff)
-    }) // end get Staffs/:staffId 
-    .put((req,res) => {
-        req.staff.title = req.body.title;
-        req.staff.author = req.body.author;
-        req.staff.save()
-        res.json(req.staff)
     })
-    .patch((req,res)=>{
+    .post((req,res)=>{
         if(req.body._id){
             delete req.body._id;
         }
@@ -43,17 +40,13 @@ staffRouter.route('/:staffId')
             req.staff[p] = req.body[p]
         }
         req.staff.save()
-        res.json(req.staff)
-    })//patch
+          .then(staff => res.status(200).send(staff) )
+          .catch(err => res.status(500).send(err))
+    })
     .delete((req,res)=>{
-        req.staff.remove(err => {
-            if(err){
-                res.status(500).send(err)
-            }
-            else{
-                res.status(204).send('removed')
-            }
-        })
-    })//delete
+        req.staff.remove()
+          .then(() => res.status(204).send('removed')) 
+          .catch(err => res.status(500).send(err))
+    })
 	 
 export default staffRouter;

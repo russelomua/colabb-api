@@ -3,7 +3,6 @@ import mongoose from 'mongoose';
 const Schema = mongoose.Schema; 
 
 const staffModel = new Schema({
-  id: mongoose.Schema.ObjectId,
   name: {
     first: { type: String, required: true },
     last: { type: String, required: true },
