@@ -28,7 +28,7 @@ authRouter.route('/')
     if (!token) return res.status(401).send({ auth: false, message: 'No token provided.' });
 
     jwt.verify(token, config.secret, (err, user) => {
-      if (err) return res.status(500).send({ auth: false, message: 'Failed to authenticate token.' });
+      if (err) return res.status(401).send({ auth: false, message: 'Failed to authenticate token.' });
       
       const userData = { id: user._id, login: user.login, email: user.email, token: token };
       

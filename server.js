@@ -3,6 +3,7 @@ import express from 'express';
 import mongoose from 'mongoose';
 import bodyParser from 'body-parser';
 import authRouter from './routes/auth';
+import registerRouter from './routes/register';
 import userRouter from './routes/user';
 import staffRouter from './routes/staff';
 import { requireAuthentication } from './helpers/functions'
@@ -35,8 +36,9 @@ app.use(CrossDomain);
 // API routes
 app.use('/auth', authRouter);
 
-app.all('/api/*', requireAuthentication)
-app.use('/user', userRouter);
+app.use('/register', registerRouter);
+app.all('/api/*', requireAuthentication);
+app.use('/api/user', userRouter);
 app.use('/api/staff', staffRouter);
 
 // Running the server

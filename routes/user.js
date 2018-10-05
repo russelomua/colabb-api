@@ -6,20 +6,43 @@ import config from '../config'
 
 const userRouter = express.Router();
 
-userRouter.route('/')
-  .post((req, res) => {
-    req.body.password = bcrypt.hashSync(req.body.password);
+// Middleware 
+userRouter.use('/', (req, res, next)=>{
+  const token = req.headers['x-access-token'];
+  if (!token) return res.status(401).send({ auth: false, message: 'No token provided.' });
 
-    let user = new User(req.body);
-    user.save()
-      .then(user => {
-        const userData = { id: user._id, login: user.login, email: user.email };
-        userData.token = jwt.sign(userData, config.secret, { expiresIn: config.expire });
-        
-        res.status(200).send(userData);
-        res.status(201).send(user)
-      })
-      .catch(err => res.status(500).send(err));
+  jwt.verify(token, config.secret, (err, userToken) => {
+    if (err) return res.status(401).send({ auth: false, message: 'Failed to authenticate token.' });
+
+    User.findById( userToken._id, (err,userdb)=>{
+      if(err)
+        res.status(500).send(err)
+      else {
+        req.user = userdb;
+        next()
+      }
+    })
   });
+})
+userRouter.route('/')
+    .get((req, res) => {
+        res.json(req.user)
+    })
+    .post((req,res)=>{
+        if(req.body._id){
+            delete req.body._id;
+        }
+        for( let p in req.body ){
+            req.user[p] = req.body[p]
+        }
+        req.user.save()
+          .then(user => res.status(200).send(user) )
+          .catch(err => res.status(500).send(err))
+    })
+    .delete((req,res)=>{
+        req.user.remove()
+          .then(() => res.status(204).send('removed')) 
+          .catch(err => res.status(500).send(err))
+    })
 	 
 export default userRouter;

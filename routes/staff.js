@@ -18,35 +18,34 @@ staffRouter.route('/')
 
 // Middleware 
 staffRouter.use('/:staffId', (req, res, next)=>{
-    Staff.findById( req.params.staffId, (err,staff)=>{
-        if(err)
-            res.status(500).send(err)
-        else {
-            req.staff = staff;
-            next()
-        }
-    })
-
+  Staff.findById( req.params.staffId, (err,staff)=>{
+    if(err)
+      res.status(500).send(err)
+    else {
+      req.staff = staff;
+      next()
+    }
+  })
 })
 staffRouter.route('/:staffId')
-    .get((req, res) => {
-        res.json(req.staff)
-    })
-    .post((req,res)=>{
-        if(req.body._id){
-            delete req.body._id;
-        }
-        for( let p in req.body ){
-            req.staff[p] = req.body[p]
-        }
-        req.staff.save()
-          .then(staff => res.status(200).send(staff) )
-          .catch(err => res.status(500).send(err))
-    })
-    .delete((req,res)=>{
-        req.staff.remove()
-          .then(() => res.status(204).send('removed')) 
-          .catch(err => res.status(500).send(err))
-    })
+  .get((req, res) => {
+    res.json(req.staff)
+  })
+  .post((req,res)=>{
+    if(req.body._id){
+      delete req.body._id;
+    }
+    for( let p in req.body ){
+      req.staff[p] = req.body[p]
+    }
+    req.staff.save()
+      .then(staff => res.status(200).send(staff) )
+      .catch(err => res.status(500).send(err))
+  })
+  .delete((req,res)=>{
+    req.staff.remove()
+      .then(() => res.status(204).send('removed')) 
+      .catch(err => res.status(500).send(err))
+  })
 	 
 export default staffRouter;
