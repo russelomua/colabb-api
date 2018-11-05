@@ -14,14 +14,14 @@ userRouter.use('/', (req, res, next)=>{
   jwt.verify(token, config.secret, (err, userToken) => {
     if (err) return res.status(401).send({ auth: false, message: 'Failed to authenticate token.' });
 
-    User.findById( userToken._id, (err,userdb)=>{
-      if(err)
-        res.status(500).send(err)
-      else {
+    User.findById( userToken.id )
+      .then( (userdb) => {
         req.user = userdb;
         next()
-      }
-    })
+      })
+      .catch((err) => {
+        res.status(500).send(err)
+      }) 
   });
 })
 userRouter.route('/')
@@ -33,7 +33,9 @@ userRouter.route('/')
             delete req.body._id;
         }
         for( let p in req.body ){
-            req.user[p] = req.body[p]
+          if (p == 'password')
+            req.body[p] = bcrypt.hashSync(req.body[p]);
+          req.user[p] = req.body[p]
         }
         req.user.save()
           .then(user => res.status(200).send(user) )
